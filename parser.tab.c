@@ -144,6 +144,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"  // Include the AST header
+#include "ir.h"   // Add this to the includes section
 
 /* Declarations for Flex */
 extern FILE *yyin;
@@ -176,7 +177,7 @@ ASTNode *root = NULL;
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 18 "parser.y"
+#line 19 "parser.y"
 {
     int intval;
     float floatval;
@@ -185,7 +186,7 @@ typedef union YYSTYPE
     ASTNode *ast;  // Add AST type
 }
 /* Line 193 of yacc.c.  */
-#line 189 "parser.tab.c"
+#line 190 "parser.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -198,7 +199,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 202 "parser.tab.c"
+#line 203 "parser.tab.c"
 
 #ifdef short
 # undef short
@@ -508,13 +509,13 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    64,    64,    73,    83,    84,    93,    94,    95,    96,
-      97,    98,    99,   100,   104,   108,   112,   119,   120,   121,
-     122,   126,   130,   141,   145,   149,   153,   157,   161,   165,
-     169,   173,   177,   181,   185,   189,   193,   197,   201,   205,
-     209,   213,   217,   221,   225,   229,   235,   239,   243,   250,
-     257,   264,   265,   266,   267,   271,   272,   276,   280,   287,
-     288,   292,   299
+       0,    65,    65,    88,   112,   113,   122,   123,   124,   125,
+     126,   127,   128,   129,   133,   137,   141,   148,   149,   150,
+     151,   155,   159,   170,   174,   178,   182,   186,   190,   194,
+     198,   202,   206,   210,   214,   218,   222,   226,   230,   234,
+     238,   242,   246,   250,   254,   258,   264,   268,   272,   279,
+     286,   293,   294,   295,   296,   300,   301,   305,   309,   316,
+     317,   321,   328
 };
 #endif
 
@@ -1540,12 +1541,26 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 64 "parser.y"
+#line 65 "parser.y"
     { 
         printf("\nProgram is syntactically correct!\n"); 
         if ((yyvsp[(1) - (2)].ast) != NULL) {
             int result = evaluate_ast((yyvsp[(1) - (2)].ast));
             printf("Program evaluation result: %d\n", result);
+            
+            // Debug
+            printf("Generating IR code...\n");
+            IRNode *ir_code = generate_ir((yyvsp[(1) - (2)].ast));
+            printf("IR code %s generated\n", ir_code ? "successfully" : "failed to be");
+            
+            if (ir_code) {
+                printf("\n--- Intermediate Code ---\n");
+                print_ir(ir_code);
+                free_ir_list(ir_code);
+            } else {
+                printf("No intermediate code was generated\n");
+            }
+            
             free_ast((yyvsp[(1) - (2)].ast));
         }
         exit(0); 
@@ -1553,23 +1568,37 @@ yyreduce:
     break;
 
   case 3:
-#line 73 "parser.y"
+#line 88 "parser.y"
     {
         printf("\nExpression is syntactically correct!\n");
         int result = evaluate_ast((yyvsp[(1) - (2)].ast));
         printf("Expression evaluation result: %d\n", result);
+        
+        // Debug
+        printf("Generating IR code...\n");
+        IRNode *ir_code = generate_ir((yyvsp[(1) - (2)].ast));
+        printf("IR code %s generated\n", ir_code ? "successfully" : "failed to be");
+        
+        if (ir_code) {
+            printf("\n--- Intermediate Code ---\n");
+            print_ir(ir_code);
+            free_ir_list(ir_code);
+        } else {
+            printf("No intermediate code was generated\n");
+        }
+        
         free_ast((yyvsp[(1) - (2)].ast));
         exit(0);
     ;}
     break;
 
   case 4:
-#line 83 "parser.y"
+#line 112 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (1)].ast); ;}
     break;
 
   case 5:
-#line 84 "parser.y"
+#line 113 "parser.y"
     { 
         // In a real compiler, you'd create a block node here
         // For simplicity, we'll just evaluate the last statement
@@ -1579,47 +1608,47 @@ yyreduce:
     break;
 
   case 6:
-#line 93 "parser.y"
+#line 122 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (2)].ast); ;}
     break;
 
   case 7:
-#line 94 "parser.y"
+#line 123 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (2)].ast); ;}
     break;
 
   case 8:
-#line 95 "parser.y"
+#line 124 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (2)].ast); ;}
     break;
 
   case 9:
-#line 96 "parser.y"
+#line 125 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (1)].ast); ;}
     break;
 
   case 10:
-#line 97 "parser.y"
+#line 126 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (1)].ast); ;}
     break;
 
   case 11:
-#line 98 "parser.y"
+#line 127 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (1)].ast); ;}
     break;
 
   case 12:
-#line 99 "parser.y"
+#line 128 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (1)].ast); ;}
     break;
 
   case 13:
-#line 100 "parser.y"
+#line 129 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (2)].ast); ;}
     break;
 
   case 14:
-#line 104 "parser.y"
+#line 133 "parser.y"
     { 
         printf("DECLARE: %s\n", (yyvsp[(2) - (2)].strval));
         (yyval.ast) = NULL; // For simplicity
@@ -1627,7 +1656,7 @@ yyreduce:
     break;
 
   case 15:
-#line 108 "parser.y"
+#line 137 "parser.y"
     { 
         printf("DECLARE_ASSIGN: %s\n", (yyvsp[(2) - (4)].strval));
         (yyval.ast) = create_assign_node((yyvsp[(2) - (4)].strval), (yyvsp[(4) - (4)].ast));
@@ -1635,7 +1664,7 @@ yyreduce:
     break;
 
   case 16:
-#line 112 "parser.y"
+#line 141 "parser.y"
     { 
         printf("DECLARE ARRAY: %s[%d]\n", (yyvsp[(2) - (5)].strval), (yyvsp[(4) - (5)].intval));
         (yyval.ast) = NULL; // For simplicity
@@ -1643,7 +1672,7 @@ yyreduce:
     break;
 
   case 21:
-#line 126 "parser.y"
+#line 155 "parser.y"
     { 
         printf("ASSIGN: %s\n", (yyvsp[(1) - (3)].strval));
         (yyval.ast) = create_assign_node((yyvsp[(1) - (3)].strval), (yyvsp[(3) - (3)].ast));
@@ -1651,7 +1680,7 @@ yyreduce:
     break;
 
   case 22:
-#line 130 "parser.y"
+#line 159 "parser.y"
     { 
         printf("PLUS_ASSIGN: %s\n", (yyvsp[(1) - (3)].strval));
         // Create AST for ID + expression, then assign
@@ -1662,7 +1691,7 @@ yyreduce:
     break;
 
   case 23:
-#line 141 "parser.y"
+#line 170 "parser.y"
     { 
         printf("VAR: %s\n", (yyvsp[(1) - (1)].strval));
         (yyval.ast) = create_id_node((yyvsp[(1) - (1)].strval));
@@ -1670,7 +1699,7 @@ yyreduce:
     break;
 
   case 24:
-#line 145 "parser.y"
+#line 174 "parser.y"
     { 
         printf("INT: %d\n", (yyvsp[(1) - (1)].intval));
         (yyval.ast) = create_int_node((yyvsp[(1) - (1)].intval));
@@ -1678,7 +1707,7 @@ yyreduce:
     break;
 
   case 25:
-#line 149 "parser.y"
+#line 178 "parser.y"
     { 
         printf("STRING: %s\n", (yyvsp[(1) - (1)].strval));
         (yyval.ast) = create_string_node((yyvsp[(1) - (1)].strval));
@@ -1686,7 +1715,7 @@ yyreduce:
     break;
 
   case 26:
-#line 153 "parser.y"
+#line 182 "parser.y"
     { 
         printf("FLOAT: %f\n", (yyvsp[(1) - (1)].floatval));
         (yyval.ast) = create_float_node((yyvsp[(1) - (1)].floatval));
@@ -1694,7 +1723,7 @@ yyreduce:
     break;
 
   case 27:
-#line 157 "parser.y"
+#line 186 "parser.y"
     { 
         printf("ADD\n");
         (yyval.ast) = create_binop_node(OP_ADD, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1702,7 +1731,7 @@ yyreduce:
     break;
 
   case 28:
-#line 161 "parser.y"
+#line 190 "parser.y"
     { 
         printf("SUBTRACT\n");
         (yyval.ast) = create_binop_node(OP_SUB, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast)); 
@@ -1710,7 +1739,7 @@ yyreduce:
     break;
 
   case 29:
-#line 165 "parser.y"
+#line 194 "parser.y"
     { 
         printf("MULTIPLY\n");
         (yyval.ast) = create_binop_node(OP_MUL, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1718,7 +1747,7 @@ yyreduce:
     break;
 
   case 30:
-#line 169 "parser.y"
+#line 198 "parser.y"
     { 
         printf("DIVIDE\n");
         (yyval.ast) = create_binop_node(OP_DIV, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1726,7 +1755,7 @@ yyreduce:
     break;
 
   case 31:
-#line 173 "parser.y"
+#line 202 "parser.y"
     { 
         printf("MODULO\n");
         (yyval.ast) = create_binop_node(OP_MOD, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1734,7 +1763,7 @@ yyreduce:
     break;
 
   case 32:
-#line 177 "parser.y"
+#line 206 "parser.y"
     { 
         printf("EQUALS\n");
         (yyval.ast) = create_binop_node(OP_EQ, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1742,7 +1771,7 @@ yyreduce:
     break;
 
   case 33:
-#line 181 "parser.y"
+#line 210 "parser.y"
     { 
         printf("NOT_EQUALS\n");
         (yyval.ast) = create_binop_node(OP_NE, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1750,7 +1779,7 @@ yyreduce:
     break;
 
   case 34:
-#line 185 "parser.y"
+#line 214 "parser.y"
     { 
         printf("LESS_THAN\n");
         (yyval.ast) = create_binop_node(OP_LT, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1758,7 +1787,7 @@ yyreduce:
     break;
 
   case 35:
-#line 189 "parser.y"
+#line 218 "parser.y"
     { 
         printf("GREATER_THAN\n");
         (yyval.ast) = create_binop_node(OP_GT, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1766,7 +1795,7 @@ yyreduce:
     break;
 
   case 36:
-#line 193 "parser.y"
+#line 222 "parser.y"
     { 
         printf("LESS_EQUAL\n");
         (yyval.ast) = create_binop_node(OP_LE, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1774,7 +1803,7 @@ yyreduce:
     break;
 
   case 37:
-#line 197 "parser.y"
+#line 226 "parser.y"
     { 
         printf("GREATER_EQUAL\n");
         (yyval.ast) = create_binop_node(OP_GE, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1782,7 +1811,7 @@ yyreduce:
     break;
 
   case 38:
-#line 201 "parser.y"
+#line 230 "parser.y"
     { 
         printf("LOGICAL_AND\n");
         (yyval.ast) = create_binop_node(OP_AND, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1790,7 +1819,7 @@ yyreduce:
     break;
 
   case 39:
-#line 205 "parser.y"
+#line 234 "parser.y"
     { 
         printf("LOGICAL_OR\n");
         (yyval.ast) = create_binop_node(OP_OR, (yyvsp[(1) - (3)].ast), (yyvsp[(3) - (3)].ast));
@@ -1798,7 +1827,7 @@ yyreduce:
     break;
 
   case 40:
-#line 209 "parser.y"
+#line 238 "parser.y"
     { 
         printf("LOGICAL_NOT\n");
         (yyval.ast) = create_unaryop_node(OP_NOT, (yyvsp[(2) - (2)].ast));
@@ -1806,7 +1835,7 @@ yyreduce:
     break;
 
   case 41:
-#line 213 "parser.y"
+#line 242 "parser.y"
     { 
         printf("NEGATE\n");
         (yyval.ast) = create_unaryop_node(OP_NEG, (yyvsp[(2) - (2)].ast));
@@ -1814,7 +1843,7 @@ yyreduce:
     break;
 
   case 42:
-#line 217 "parser.y"
+#line 246 "parser.y"
     { 
         printf("POST_INCREMENT: %s\n", (yyvsp[(1) - (2)].strval));
         (yyval.ast) = create_unaryop_node(OP_INC, create_id_node((yyvsp[(1) - (2)].strval)));
@@ -1822,7 +1851,7 @@ yyreduce:
     break;
 
   case 43:
-#line 221 "parser.y"
+#line 250 "parser.y"
     { 
         printf("POST_DECREMENT: %s\n", (yyvsp[(1) - (2)].strval));
         (yyval.ast) = create_unaryop_node(OP_DEC, create_id_node((yyvsp[(1) - (2)].strval)));
@@ -1830,7 +1859,7 @@ yyreduce:
     break;
 
   case 44:
-#line 225 "parser.y"
+#line 254 "parser.y"
     { 
         printf("FUNCTION_CALL: %s()\n", (yyvsp[(1) - (3)].strval));
         (yyval.ast) = create_funcall_node((yyvsp[(1) - (3)].strval), NULL, 0);
@@ -1838,7 +1867,7 @@ yyreduce:
     break;
 
   case 45:
-#line 229 "parser.y"
+#line 258 "parser.y"
     { 
         printf("FUNCTION_CALL_WITH_ARGS: %s(...)\n", (yyvsp[(1) - (4)].strval));
         // $3 is now an argument list node, use its fields
@@ -1848,12 +1877,12 @@ yyreduce:
     break;
 
   case 46:
-#line 235 "parser.y"
+#line 264 "parser.y"
     { (yyval.ast) = (yyvsp[(2) - (3)].ast); ;}
     break;
 
   case 47:
-#line 239 "parser.y"
+#line 268 "parser.y"
     { 
         printf("IF\n");
         (yyval.ast) = NULL; // To be implemented
@@ -1861,7 +1890,7 @@ yyreduce:
     break;
 
   case 48:
-#line 243 "parser.y"
+#line 272 "parser.y"
     { 
         printf("IF-ELSE\n");
         (yyval.ast) = NULL; // To be implemented
@@ -1869,7 +1898,7 @@ yyreduce:
     break;
 
   case 49:
-#line 250 "parser.y"
+#line 279 "parser.y"
     { 
         printf("WHILE\n");
         (yyval.ast) = NULL; // To be implemented
@@ -1877,7 +1906,7 @@ yyreduce:
     break;
 
   case 50:
-#line 257 "parser.y"
+#line 286 "parser.y"
     { 
         printf("FOR\n");
         (yyval.ast) = NULL; // To be implemented
@@ -1885,37 +1914,37 @@ yyreduce:
     break;
 
   case 51:
-#line 264 "parser.y"
+#line 293 "parser.y"
     { (yyval.ast) = NULL; ;}
     break;
 
   case 52:
-#line 265 "parser.y"
+#line 294 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (1)].ast); ;}
     break;
 
   case 53:
-#line 266 "parser.y"
+#line 295 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (1)].ast); ;}
     break;
 
   case 54:
-#line 267 "parser.y"
+#line 296 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (1)].ast); ;}
     break;
 
   case 55:
-#line 271 "parser.y"
+#line 300 "parser.y"
     { (yyval.ast) = (yyvsp[(2) - (3)].ast); ;}
     break;
 
   case 56:
-#line 272 "parser.y"
+#line 301 "parser.y"
     { (yyval.ast) = NULL; ;}
     break;
 
   case 57:
-#line 276 "parser.y"
+#line 305 "parser.y"
     { 
         printf("RETURN\n");
         (yyval.ast) = NULL; 
@@ -1923,7 +1952,7 @@ yyreduce:
     break;
 
   case 58:
-#line 280 "parser.y"
+#line 309 "parser.y"
     { 
         printf("RETURN VALUE\n");
         (yyval.ast) = NULL; // To be implemented
@@ -1931,17 +1960,17 @@ yyreduce:
     break;
 
   case 59:
-#line 287 "parser.y"
+#line 316 "parser.y"
     { (yyval.ast) = NULL; ;}
     break;
 
   case 60:
-#line 288 "parser.y"
+#line 317 "parser.y"
     { (yyval.ast) = (yyvsp[(1) - (1)].ast); ;}
     break;
 
   case 61:
-#line 292 "parser.y"
+#line 321 "parser.y"
     { 
         printf("ARGUMENT\n");
         // Create an array with a single argument
@@ -1952,7 +1981,7 @@ yyreduce:
     break;
 
   case 62:
-#line 299 "parser.y"
+#line 328 "parser.y"
     { 
         printf("ARGUMENT_LIST\n");
         // Add the new expression to the existing argument list
@@ -1974,7 +2003,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1978 "parser.tab.c"
+#line 2007 "parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2188,7 +2217,7 @@ yyreturn:
 }
 
 
-#line 318 "parser.y"
+#line 347 "parser.y"
 
 
 // Error handling function

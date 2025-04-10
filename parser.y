@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ast.h"  // Include the AST header
+#include "ir.h"   // Add this to the includes section
 
 /* Declarations for Flex */
 extern FILE *yyin;
@@ -66,6 +67,20 @@ program:
         if ($1 != NULL) {
             int result = evaluate_ast($1);
             printf("Program evaluation result: %d\n", result);
+            
+            // Debug
+            printf("Generating IR code...\n");
+            IRNode *ir_code = generate_ir($1);
+            printf("IR code %s generated\n", ir_code ? "successfully" : "failed to be");
+            
+            if (ir_code) {
+                printf("\n--- Intermediate Code ---\n");
+                print_ir(ir_code);
+                free_ir_list(ir_code);
+            } else {
+                printf("No intermediate code was generated\n");
+            }
+            
             free_ast($1);
         }
         exit(0); 
@@ -74,6 +89,20 @@ program:
         printf("\nExpression is syntactically correct!\n");
         int result = evaluate_ast($1);
         printf("Expression evaluation result: %d\n", result);
+        
+        // Debug
+        printf("Generating IR code...\n");
+        IRNode *ir_code = generate_ir($1);
+        printf("IR code %s generated\n", ir_code ? "successfully" : "failed to be");
+        
+        if (ir_code) {
+            printf("\n--- Intermediate Code ---\n");
+            print_ir(ir_code);
+            free_ir_list(ir_code);
+        } else {
+            printf("No intermediate code was generated\n");
+        }
+        
         free_ast($1);
         exit(0);
     }
